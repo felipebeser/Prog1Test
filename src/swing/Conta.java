@@ -10,6 +10,7 @@ public abstract class Conta {
 	private int agencia;
 	private int numero;
 	private String titular;
+	private String email;
 	protected double saldo;
 	public static int totalContas;
 
