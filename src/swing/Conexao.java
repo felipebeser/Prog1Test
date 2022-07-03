@@ -9,7 +9,7 @@ public class Conexao {
 		Connection conexao = null;
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			String url = "jdbc:mysql://localhost/banco"; // URL do banco de dados
+			String url = "jdbc:mysql://localhost/lojadeinstrumentos"; // URL do banco de dados
 			String user = "root"; // nome do usuário do banco
 			String password = ""; // senha do banco
 			conexao = DriverManager.getConnection(url, user, password);

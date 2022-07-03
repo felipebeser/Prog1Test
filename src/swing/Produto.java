@@ -6,72 +6,67 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public abstract class Conta {
-	private int agencia;
-	private int numero;
-	private String titular;
-	private String email;
-	protected double saldo;
-	public static int totalContas;
-
-	Conta() {
-		this.titular = "";
-		Conta.totalContas++;
+public class Produto {
+	private int id;
+	private String titulo;
+	private String categoria;
+	private float preco;
+	private int status;
+	
+	
+	public int getId() {
+		return id;
 	}
 
-	Conta(int numAgencia, int numConta) {
-		this();
-		this.agencia = numAgencia;
-		this.numero = numConta;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public String getTitular() {
-		return titular;
+	public String getTitulo() {
+		return titulo;
 	}
 
-	public void setTitular(String titular) {
-		this.titular = titular;
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
 	}
 
-	public int getAgencia() {
-		return agencia;
+	public String getCategoria() {
+		return categoria;
 	}
 
-	public void setAgencia(int agencia) {
-		this.agencia = agencia;
+	public void setCategoria(String categoria) {
+		this.categoria = categoria;
 	}
 
-	public int getNumero() {
-		return numero;
+	public float getPreco() {
+		return preco;
 	}
 
-	public void setNumero(int numero) {
-		this.numero = numero;
+	public void setPreco(float preco) {
+		this.preco = preco;
 	}
 
-	public double getSaldo() {
-		return saldo;
+	public int getStatus() {
+		return status;
 	}
 
-	public void deposita(double valor) {
-		this.saldo = this.saldo + valor;
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
-	public abstract boolean saca(double valor);
-
-	public boolean cadastrarConta(int numAgencia, int numConta, String titular) {
+	public boolean cadastrarProduto(String titulo, String categoria, float preco) {
 		// Define a conexão
 		Connection conexao = null;
 		try {
 			conexao = Conexao.conectaBanco();
 			// Define a consulta
-			String sql = "insert into conta set agencia=?, numero=?, titular=?, saldo=0;";
+			String sql = "insert into product set titulo=?, categoria=?, preco=?, status=1;";
 			// Prepara a consulta
 			PreparedStatement ps = conexao.prepareStatement(sql);
 			// Define os parâmetros da consulta
-			ps.setInt(1, numAgencia); // Substitui o primeiro parâmetro da consulta pela agência informada
-			ps.setInt(2, numConta); // Substitui o segundo parâmetro da consulta pela conta informada
-			ps.setString(3, titular); // Substitui o terceiro parâmetro da consulta pelo titular informado
+			ps.setString(1, titulo); // Substitui o primeiro parâmetro da consulta pela agência informada
+			ps.setString(2, categoria); // Substitui o segundo parâmetro da consulta pela conta informada
+			ps.setFloat(3, preco); // Substitui o terceiro parâmetro da consulta pelo titular informado
 			int totalRegistrosAfetados = ps.executeUpdate();
 			if (totalRegistrosAfetados == 0) {
 				System.out.println("Não foi feito o cadastro!!");
@@ -87,18 +82,18 @@ public abstract class Conta {
 		}
 	}
 
-	public boolean consultarConta(int numAgencia, int numConta) {
+	public boolean consultarProduto(String titulo, String categoria) {
 		// Define a conexão
 		Connection conexao = null;
 		try {
 			conexao = Conexao.conectaBanco();
 			// Define a consulta
-			String sql = "select * from conta where agencia=? and numero=?";
+			String sql = "select * from product where titulo=? and categoria=? and status=1";
 			// Prepara a consulta
 			PreparedStatement ps = conexao.prepareStatement(sql);
 			// Define os parâmetros da consulta
-			ps.setInt(1, numAgencia); // Substitui o primeiro parâmetro da consulta pela agência informada
-			ps.setInt(2, numConta); // Substitui o segundo parâmetro da consulta pela conta informada
+			ps.setString(1, titulo); // Substitui o primeiro parâmetro da consulta pela agência informada
+			ps.setString(2, categoria); // Substitui o segundo parâmetro da consulta pela conta informada
 			// Executa a consulta, resultando em um objeto da classe ResultSet
 			ResultSet rs = ps.executeQuery();
 			if (!rs.isBeforeFirst()) { // Verifica se não está antes do primeiro registro
@@ -106,23 +101,23 @@ public abstract class Conta {
 			} else {
 				// Efetua a leitura do registro da tabela
 				while (rs.next()) {
-					this.agencia = rs.getInt("agencia");
-					this.numero = rs.getInt("numero");
-					this.titular = rs.getString("titular");
-					this.saldo = rs.getDouble("saldo");
+					this.titulo = rs.getString("titulo");
+					this.categoria = rs.getString("categoria");
+					this.status = rs.getInt("status");
+					this.preco = rs.getFloat("preco");
 				}
 				return true;
 			}
 		} catch (SQLException erro) {
-			System.out.println("Erro ao consultar a conta: " + erro.toString());
+			System.out.println("Erro ao consultar o produto: " + erro.toString());
 			return false;
 		} finally {
 			Conexao.fechaConexao(conexao);
 		}
 	}
 
-	public boolean atualizarConta(int numAgencia, int numConta, String titular) {
-		if (!consultarConta(numAgencia, numConta))
+	public boolean atualizarProduto(String titulo, String categoria, float preco) {
+		if (!consultarProduto(titulo, categoria))
 			return false;
 		else {
 			// Define a conexão
@@ -131,14 +126,16 @@ public abstract class Conta {
 				// Define a conexão
 				conexao = Conexao.conectaBanco();
 				// Define a consulta
-				String sql = "update conta set titular=?, saldo=? where agencia=? and numero=?";
+				String sql = "update product set titulo=?, categoria=? , preco=? where titulo=? and categoria=?";
 				// Prepara a consulta
 				PreparedStatement ps = conexao.prepareStatement(sql);
 				// Define os parâmetros da atualização
-				ps.setString(1, titular);
-				ps.setDouble(2, saldo);
-				ps.setInt(3, numAgencia);
-				ps.setInt(4, numConta);
+				ps.setString(1, titulo);
+				ps.setString(2, categoria);
+				ps.setFloat(3, preco);
+				ps.setString(4, titulo);
+				ps.setString(5, categoria);
+				
 				int totalRegistrosAfetados = ps.executeUpdate();
 				if (totalRegistrosAfetados == 0)
 					System.out.println("Não foi feita a atualização!");
@@ -146,7 +143,39 @@ public abstract class Conta {
 					System.out.println("Atualização realizada!");
 				return true;
 			} catch (SQLException erro) {
-				System.out.println("Erro ao atualizar a conta: " + erro.toString());
+				System.out.println("Erro ao atualizar o produto: " + erro.toString());
+				return false;
+			} finally {
+				Conexao.fechaConexao(conexao);
+			}
+		}
+	}
+	public boolean deletarProduto(String titulo, String categoria, float preco) {
+		if (!consultarProduto(titulo, categoria))
+			return false;
+		else {
+			// Define a conexão
+			Connection conexao = null;
+			try {
+				// Define a conexão
+				conexao = Conexao.conectaBanco();
+				// Define a consulta
+				String sql = "update product set status=-1 where titulo=? and categoria=? and preco=?";
+				// Prepara a consulta
+				PreparedStatement ps = conexao.prepareStatement(sql);
+				// Define os parâmetros da atualização
+				ps.setString(1, titulo);
+				ps.setString(2, categoria);
+				ps.setFloat(3, preco);
+				
+				int totalRegistrosAfetados = ps.executeUpdate();
+				if (totalRegistrosAfetados == 0)
+					System.out.println("Não foi feita a exclusão!");
+				else
+					System.out.println("Produto excluído!");
+				return true;
+			} catch (SQLException erro) {
+				System.out.println("Erro ao deletar o produto: " + erro.toString());
 				return false;
 			} finally {
 				Conexao.fechaConexao(conexao);
@@ -154,3 +183,4 @@ public abstract class Conta {
 		}
 	}
 }
+

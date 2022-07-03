@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -12,45 +13,56 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 public class TesteSwing {
+
 	public static void main(String[] args) {
 		// Define a janela
-		JFrame janela = new JFrame("Cadastro de conta"); // Janela Normal
-		janela.setResizable(false); // A janela não poderá ter o tamanho ajustado
+		JFrame janela = new JFrame("Cadastro de produtos"); // Janela Normal
+		janela.setResizable(false); // A janela nï¿½o poderï¿½ ter o tamanho ajustado
 		janela.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		janela.setSize(400, 300); // Define tamanho da janela
 		// Define o layout da janela
 		Container caixa = janela.getContentPane();
 		caixa.setLayout(null);
 		// Define os labels dos campos
-		JLabel labelAgencia = new JLabel("Agência: ");
-		JLabel labelNumero = new JLabel("Número da conta: ");
-		JLabel labelTitular = new JLabel("Titular: ");
+		JLabel labelTitulo = new JLabel("TÃ­tulo: ");
+		JLabel labelCategoria = new JLabel("Categoria: ");
+		JLabel labelPreco = new JLabel("PreÃ§o: ");
+		JLabel labelMensagem = new JLabel("");
 		// Posiciona os labels na janela
-		labelAgencia.setBounds(50, 40, 100, 20); // coluna, linha, largura, tamanho
-		labelNumero.setBounds(50, 80, 150, 20); // coluna, linha, largura, tamanho
-		labelTitular.setBounds(50, 120, 100, 20); // coluna, linha, largura, tamanho
+		labelTitulo.setBounds(50, 40, 100, 20); // coluna, linha, largura, tamanho
+		labelCategoria.setBounds(50, 80, 150, 20); // coluna, linha, largura, tamanho
+		labelPreco.setBounds(50, 120, 100, 20); // coluna, linha, largura, tamanho
+		labelMensagem.setBounds(110, 160, 250, 20); // coluna, linha, largura, tamanho
 		// Define os input box
-		JTextField jTextAgencia = new JTextField();
-		JTextField jTextNumero = new JTextField();
-		JTextField jTextTitular = new JTextField();
-		// Define se os campos estão habilitados ou não no início
-		jTextAgencia.setEnabled(true);
-		jTextNumero.setEnabled(true);
-		jTextTitular.setEnabled(false);
+		JTextField jTextTitulo = new JTextField();
+		
+		String[] categorias = new String[] {"Guitarra", "Baixo", "Bateria"};
+
+		JComboBox<String> jBoxCategoria = new JComboBox<String>(categorias);
+		//JTextField jTextCategoria = new JTextField();
+		JTextField jTextPreco = new JTextField();
+		// Define se os campos estï¿½o habilitados ou nï¿½o no inï¿½cio
+		jTextTitulo.setEnabled(true);
+		//jTextCategoria.setEnabled(true);
+		jBoxCategoria.setEnabled(true);
+		jTextPreco.setEnabled(false);
 		// Posiciona os input box
-		jTextAgencia.setBounds(180, 40, 50, 20);
-		jTextNumero.setBounds(180, 80, 50, 20);
-		jTextTitular.setBounds(180, 120, 150, 20);
-		// Adiciona os rótulos e os input box na janela
-		janela.add(labelAgencia);
-		janela.add(labelNumero);
-		janela.add(labelTitular);
-		janela.add(jTextAgencia);
-		janela.add(jTextNumero);
-		janela.add(jTextTitular);
-		// Define botões e a localização deles na janela
+		jTextTitulo.setBounds(180, 40, 150, 20);
+		//jTextCategoria.setBounds(180, 80, 150, 20);
+		jBoxCategoria.setBounds(180, 80, 150, 20);
+		jTextPreco.setBounds(180, 120, 70, 20);
+		// Adiciona os rï¿½tulos e os input box na janela
+		janela.add(labelTitulo);
+		janela.add(labelCategoria);
+		janela.add(labelPreco);
+		janela.add(labelMensagem);
+		janela.add(jTextTitulo);
+		//janela.add(jTextCategoria);
+		janela.add(jBoxCategoria);
+		janela.add(jTextPreco);
+		// Define botï¿½es e a localizaï¿½ï¿½o deles na janela
 		JButton botaoConsultar = new JButton("Consultar");
-		botaoConsultar.setBounds(230, 80, 100, 20);
+		botaoConsultar.setBounds(250, 120, 100, 20);
 		janela.add(botaoConsultar);
 		JButton botaoGravar = new JButton("Gravar");
 		botaoGravar.setBounds(50, 200, 100, 20);
@@ -61,53 +73,69 @@ public class TesteSwing {
 		janela.add(botaoLimpar);
 		JButton botaoDeletar = new JButton("Deletar");
 		botaoDeletar.setBounds(250, 230, 100, 20);
+		botaoDeletar.setEnabled(false);
 		janela.add(botaoDeletar);
 		// Define objeto conta para pesquisar no banco de dados
-		ContaCorrenteNormal conta = new ContaCorrenteNormal();
-		// Define ações dos botões
+		Produto produto = new Produto();
+		
+		// Define aï¿½ï¿½es dos botï¿½es
 		botaoConsultar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					int agencia = Integer.parseInt(jTextAgencia.getText());
-					int numero = Integer.parseInt(jTextNumero.getText());
+					String titulo = jTextTitulo.getText();
+					//String categoria = jTextCategoria.getText();
+					String categoria = jBoxCategoria.getSelectedItem().toString();
 					botaoGravar.setEnabled(true);
-					String titular;
-					if (!conta.consultarConta(agencia, numero))
-						titular = "";
-					else
-						titular = conta.getTitular();
-					jTextTitular.setText(titular);
-					jTextAgencia.setEnabled(false);
-					jTextNumero.setEnabled(false);
+					Float preco;
+					if (titulo.length()==0) {
+						JOptionPane.showMessageDialog(janela, "Preencha o campo tÃ­tulo");
+						jTextTitulo.requestFocus();
+					}
+					else {
+						if(!produto.consultarProduto(titulo, categoria)) {
+							labelMensagem.setText("Produto nÃ£o encontrado!");
+							preco = 0f;
+							}
+						else {
+							preco = produto.getPreco();
+							labelMensagem.setText("Produto encontrado!");
+						}
+					jTextPreco.setText(String.valueOf(preco));
+					jTextTitulo.setEnabled(false);
+					//jTextCategoria.setEnabled(false);
+					jBoxCategoria.setEnabled(false);
 					botaoConsultar.setEnabled(false);
-					jTextTitular.setEnabled(true);
-					jTextTitular.requestFocus();
+					botaoDeletar.setEnabled(true);
+					jTextPreco.setEnabled(true);
+					jTextPreco.requestFocus();
+					}
 				} catch (Exception erro) {
 					JOptionPane.showMessageDialog(janela,
-							"Preencha os campos agência e número da conta corretamente!!");
+							"Preencha os campos tÃ­tulo e categoria corretamente!");
 				}
 			}
 		});
 		botaoGravar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int agencia = Integer.parseInt(jTextAgencia.getText());
-				int numero = Integer.parseInt(jTextNumero.getText());
-				String titular = jTextTitular.getText().trim(); // Retira os espaços em branco
-				if (titular.length()==0) {
-					JOptionPane.showMessageDialog(janela, "Preencha o campo titular");
-					jTextTitular.requestFocus();
+				String titulo = jTextTitulo.getText();
+				//String categoria = jTextCategoria.getText();
+				String categoria = jBoxCategoria.getSelectedItem().toString();
+				float preco = Float.parseFloat(jTextPreco.getText().trim()); // Retira os espaï¿½os em branco
+				if (preco==0) {
+					JOptionPane.showMessageDialog(janela, "Preencha um preÃ§o para o produto");
+					jTextPreco.requestFocus();
 				}
 				else {
-					if (!conta.consultarConta(agencia, numero)) {
-						if (!conta.cadastrarConta(agencia, numero, titular))
-							JOptionPane.showMessageDialog(janela, "Erro na inclusão do titular!");
+					if (!produto.consultarProduto(titulo, categoria)) {
+						if (!produto.cadastrarProduto(titulo, categoria, preco))
+							JOptionPane.showMessageDialog(janela, "Erro na inclusÃ£o do tÃ­tulo!");
 						else
-							JOptionPane.showMessageDialog(janela, "Inclusão realizada!");
+							labelMensagem.setText("Produto cadastrado!");
 					} else {
-						if (!conta.atualizarConta(agencia, numero, titular))
-							JOptionPane.showMessageDialog(janela, "Erro na atualização do titular!");
+						if (!produto.atualizarProduto(titulo, categoria, preco))
+							JOptionPane.showMessageDialog(janela, "Erro na atualizaÃ§Ã£o do titular!");
 						else
-							JOptionPane.showMessageDialog(janela, "Alteração realizada!");
+							labelMensagem.setText("Produto alterado!");
 					}
 
 				}
@@ -115,17 +143,57 @@ public class TesteSwing {
 		});
 		botaoLimpar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				jTextAgencia.setText(""); // Limpar campo
-				jTextNumero.setText(""); // Limpar campo
-				jTextTitular.setText(""); // Limpar campo
-				jTextAgencia.setEnabled(true);
-				jTextNumero.setEnabled(true);
-				jTextTitular.setEnabled(false);
+				jTextTitulo.setText(""); // Limpar campo
+				//jTextCategoria.setText(""); // Limpar campo
+				jBoxCategoria.setSelectedIndex(0);
+				jTextPreco.setText(""); // Limpar campo
+				jTextTitulo.setEnabled(true);
+				//jTextCategoria.setEnabled(true);
+				jBoxCategoria.setEnabled(true);
+				jTextPreco.setEnabled(false);
 				botaoConsultar.setEnabled(true);
 				botaoGravar.setEnabled(false);
-				jTextAgencia.requestFocus(); // Colocar o foco em um campo
+				botaoDeletar.setEnabled(false);
+				labelMensagem.setText(null);
+				jTextTitulo.requestFocus(); // Colocar o foco em um campo
 			}
 		});
+		
+		botaoDeletar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String titulo = jTextTitulo.getText();
+				//String categoria = jTextCategoria.getText();
+				String categoria = jBoxCategoria.getSelectedItem().toString();
+				float preco = Float.parseFloat(jTextPreco.getText().trim()); // Retira os espaï¿½os em branco
+					if (!produto.consultarProduto(titulo, categoria)) {
+						labelMensagem.setText("Erro, produto nÃ£o encontrado!");
+					} else {
+						int input = JOptionPane.showConfirmDialog(janela, "Tem certeza que deseja excluir o produto?");
+						if(input==0) {
+							if (!produto.deletarProduto(titulo, categoria, preco))
+								JOptionPane.showMessageDialog(janela, "Erro na exclusÃ£o do produto!");
+							else {
+								labelMensagem.setText("Produto excluÃ­do!");
+								jTextPreco.setText("");
+								jBoxCategoria.setSelectedIndex(0);
+								jTextPreco.setText(""); // Limpar campo
+								jTextTitulo.setEnabled(true);
+								//jTextCategoria.setEnabled(true);
+								jBoxCategoria.setEnabled(true);
+								jTextPreco.setEnabled(false);
+								botaoConsultar.setEnabled(true);
+								botaoGravar.setEnabled(false);
+								botaoDeletar.setEnabled(false);
+								jTextTitulo.setText("");
+								jTextTitulo.requestFocus();
+							}
+						}
+						else
+							JOptionPane.showMessageDialog(janela, "OperaÃ§Ã£o cancelada.");
+					}
+			}
+		});
+		
 		// Apresenta a janela
 		janela.setVisible(true); // Exibe a janela
 	}

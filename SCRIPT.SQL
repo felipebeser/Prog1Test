@@ -1,10 +1,12 @@
-CREATE DATABASE LOJA-INSTRUMENTOS
+CREATE DATABASE lojadeinstrumentos;
 
-CREATE TABLE STATUS (
+USE lojadeinstrumentos;
+
+CREATE TABLE productStatus (
 	status int,
 	descricao varchar(50),
 	constraint status_pk PRIMARY KEY (status)
-)
+);
 
 CREATE TABLE product (
 	id int NOT NULL AUTO_INCREMENT,
@@ -14,9 +16,10 @@ CREATE TABLE product (
 	status int NOT NULL,
 	constraint product_pk PRIMARY KEY (id),
 	constraint status_fk FOREIGN KEY (status)
-		references STATUS(status)
-)
+		references productStatus(status)
+);
 
-INSERT INTO STATUS VALUES()
+INSERT INTO productStatus VALUES (1,"Ativo"),
+(-1,"Inativo");
 
 
