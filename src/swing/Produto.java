@@ -5,14 +5,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+/**
+ * Esta classe implementa os atributos do produto e suas operações CRUD via JDBC.
+ * 
+ * @see java.sql.Connection
+ * 
+ * @author felipebeser
+ *
+ */
 public class Produto {
 	private int id;
 	private String titulo;
 	private String categoria;
 	private float preco;
 	private int status;
-	
 	
 	public int getId() {
 		return id;

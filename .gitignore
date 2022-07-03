@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/java
 # Edit at https://www.toptal.com/developers/gitignore?templates=java
 
+bin/
+.DS_STORE
 ### Java ###
 # Compiled class file
 *.class

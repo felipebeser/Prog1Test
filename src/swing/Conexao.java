@@ -3,7 +3,11 @@ package swing;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
+/**
+ * Conexao ao banco de dados MySql
+ * @author felipebeser
+ *
+ */
 public class Conexao {
 	public static Connection conectaBanco() {
 		Connection conexao = null;
